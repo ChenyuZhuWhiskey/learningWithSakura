@@ -12,9 +12,14 @@
 - iterator
 - container
   - vector
-  - list 到一半
+  - list 
+  - tree
+  - hashtable开始
+- functor
+- adaptor
+- unintitialized_xxx/copy fill
 
 ### 计算机系统基础（一）
 
-- 到8.2.2联合类型分配与访问
+- 到10.2.1链接的本质
 
