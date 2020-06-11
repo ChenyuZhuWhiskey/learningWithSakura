@@ -11,3 +11,4 @@
 - unintitialized_xxx/copy fill
 - functor
 - adaptor
+- hashtable
