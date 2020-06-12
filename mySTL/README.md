@@ -12,3 +12,5 @@
 - functor
 - adaptor
 - hashtable
+- map/set
+- hashmap/hashset
