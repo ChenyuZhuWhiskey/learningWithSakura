@@ -29,5 +29,8 @@ Compiler：
 
 ### 计算机系统基础（一）
 
-- 到11.2.1静态共享库的创建
+- 完成
 
+### CSAPP Lab
+
+data，bomb，attack，buffer，arch，cache，perform，还差shell，malloc，proxy
