@@ -10,3 +10,4 @@
 - buffer: https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/BUFFER_README.md 
 - architecture: https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/ARCHLAB_README.md 
 - cache and performance:  https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/CACHELAB_README.md 
+- shell lab

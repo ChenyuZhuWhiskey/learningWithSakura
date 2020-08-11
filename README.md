@@ -33,4 +33,4 @@ Compiler：
 
 ### CSAPP Lab
 
-data，bomb，attack，buffer，arch，cache，perform，还差shell，malloc，proxy
+data，bomb，attack，buffer，arch，cache，perform，shell，还差malloc，proxy
