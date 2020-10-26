@@ -23,9 +23,9 @@
 - adaptor：简单容器改造一下得到的其他容器
 - container：容器是STL提供的标准数据结构，我在myTinySTL中实现了几个比较重要的数据结构：
 	- vector：三根指向连续内存，空间不够时申请一块2*size的新内存然后用`initialized_copy()`拷贝赋值
-		![stl_vector](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/stl_mem_diagram/stl_vector.png)	
+		![stl_vector](img/stl_vector.png)	
 	- list：双向链表，首尾相连（环状）
-![stl_list](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/stl_mem_diagram/stl_list.png)
+![stl_list](img/stl_list.png)
 	- tree:红黑树。
 由于在写STL时没有系统学习过数据结构，因此补充了一下数据结构的知识。搜索树结构实际上启发于binary search，对于一个定义了比较的并且sorted in ordered的sequence，我们就可以使用binary search将复杂度降到log(n)。于是想到构造一种二叉搜索树：
 ```C++
@@ -60,13 +60,14 @@ static BSTree* Search(BSTree* __tree, _Data& __data){
 ##### 定义与性质
 有了前面的两种优化思路，我们就能定义红黑树了，红黑树其实就是`2-3Tree + Btree`,我们知道，B Tree其实在形式上已经高度平衡了，但肯定是BSTree才能用，那么我们就做一个约定将2-3 Tree转化为BSTree，这种带有约定的BStree就是红黑树：
 split一个node后，右着（大的）成为父节点
-![BT_to_RBT](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/BTree_to_RBT.png)
+![BT_to_RBT](img/BTree_to_RBT.png)
 同时，将split后的边标为红色，其余为黑色。
 根据这个定义，我们能得到红黑树的两条性质：
+
 - 一个节点不可能有两条红色的边
 - 根节点到每一条路径的黑色边数量相等
 性质一是显然的，假如一个节点有两条红边，对应的2-3Tree就是这样：
-![RBTImp](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/RBTree_imba_case.png)
+![RBTImp](img/RBTree_imba_case.png)
 显然违反了2-3Tree的定义。
 性质二也是显然的，2-3Tree本来就是平衡树，split只会产生新的红边，那么每个路径通过的黑边自然相同。
 根据性质1和2，能得到推论：
@@ -76,12 +77,12 @@ split一个node后，右着（大的）成为父节点
 ##### 插入算法
 对于红黑树节点的插入算法，实际上就是把2-3Tree的插入算法步骤通过定义约定映射到BSTree就行了：
 - 第一步：add。add会出现两种case：insert的新值到左或者右边（其余case都是insert后不违反定义的，就不提了）
-![Insert_Add](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/RBT_insert_add.png)
-![Insert_Add_case2](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/RBT_insert_add_case2.png)
+![Insert_Add](img/RBT_insert_add.png)
+![Insert_Add_case2](img/RBT_insert_add_case2.png)
 假如是case2，我们先用rotateRight将它变为case1;
-![Insert_rotate_case2to1](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/RBT_insert_rotate_case2tocase1.png)
+![Insert_rotate_case2to1](img/RBT_insert_rotate_case2tocase1.png)
 - 第二部splite：实际上就是变换边的颜色：
-![Insert_split](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/RBT_insert_splite.png)
+![Insert_split](img/RBT_insert_splite.png)
 假如插入节点没有违反红黑树规则1，那么就不用flip，假如flip后父节点违反规则1，则递归进行前面步骤。
 ##### 顺便吐槽一下
 STL C++的红黑树插入没用递归来写，代码的if嵌套极其复杂，不知道开发人员怎么想的。
@@ -98,10 +99,11 @@ size_type hash_func(Obj& __obj, Bucket& __bucket){
 }
 ```
 具体实现地话，在stl中，bucket就是一个(`std::vector<*_Node>`)，`_Node`是单链表：
-![stl_hashtable](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/stl_mem_diagram/stl_hashtable.png)
+![stl_hashtable](img/stl_hashtable.png)
 判断链表是否过长时使用一种经验方法：当插入数大于bucket的size时，就认为链表过长，此时重新申请更大空间，并按照hash函数重新分配各个obj。
-![HT_size](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/hashTable_size.png)
+![HT_size](img/hashTable_size.png)
 stl的size就是这么取的，第一个是53，接下来不断加倍，取最近的素数作为新的size。
+
  - map/set：adaptor，底层数据结构就是一个红黑树
  - hashmap/hashset：adaptor，底层数据结构就是一个hashtable.
 
@@ -146,19 +148,19 @@ int main() {
 
 #### Program Assignment：
 
-- PA2：![PA2](https://weekly-assignment-1302348848.cos.ap-shanghai.myqcloud.com/week5/PA2.png)
+- PA2：![PA2](img/PA2.png)
 
   见  https://github.com/ChenyuZhuWhiskey/CS143_Compiler/tree/master/assignments/PA2
 
 - PA3：
 
-![PA3](https://weekly-assignment-1302348848.cos.ap-shanghai.myqcloud.com/week5/PA3.png)
+![PA3](img/PA3.png)
 
 ​	见 https://github.com/ChenyuZhuWhiskey/CS143_Compiler/blob/master/assignments/PA3
 
 - PA4：
 
-![PA4](https://weekly-assignment-1302348848.cos.ap-shanghai.myqcloud.com/week5/PA4.png)
+![PA4](img/PA4.png)
 
 ​	见 https://github.com/ChenyuZhuWhiskey/CS143_Compiler/tree/master/assignments/PA4 
 
@@ -237,7 +239,7 @@ int main() {
 
   - PartA模拟缓存的工作。首先要知道缓存的算法流程：
 
-  ![cache](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/kernel-note/00-Write-back_with_write-allocation.png)
+  ![cache](img/00-Write-back_with_write-allocation.png)
 
   接下来照着写就行。
 
