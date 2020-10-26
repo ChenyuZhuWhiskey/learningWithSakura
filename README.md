@@ -104,7 +104,34 @@ stl的size就是这么取的，第一个是53，接下来不断加倍，取最�
 	- hashmap/hashset：adaptor，底层数据结构就是一个hashtable.
 </details>
 
+<details>
+<summary>Week1～2: 学习编写简单的sgi stl</summary>
 
+### 主项目：
+
+传送门: [GraVity0-stl](https://github.com/yytgravity/Daily-learning-record/tree/master/第1～2周/GraVity0_stl)
+
+### Question 1 ： vector编写过程中的安全问题思考：
+
+传送门: [vector编写过程中的安全问题思考](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/vector%E7%BC%96%E5%86%99%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%E6%80%9D%E8%80%83.md)
+
+### Question 2 ：为什么实现了uninitialized_xxx和copy/fill这样两组不同的函数：
+
+传送门: [为什么实现了uninitialized_xxx和copy/fill这样两组不同的函数](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%9E%E7%8E%B0%E4%BA%86uninitialized_xxx%E5%92%8Ccopy:fill%E8%BF%99%E6%A0%B7%E4%B8%A4%E7%BB%84%E4%B8%8D%E5%90%8C%E7%9A%84%E5%87%BD%E6%95%B0.md)
+
+### Question 3 ：绘制每个容器在内存里的对象存储图
+
+传送门: [绘制每个容器在内存里的对象存储图](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/%E7%BB%98%E5%88%B6%E6%AF%8F%E4%B8%AA%E5%AE%B9%E5%99%A8%E5%9C%A8%E5%86%85%E5%AD%98%E9%87%8C%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%9B%BE.md)
+
+### Question 4 ：测试题目
+
+传送门: [小测试](https://github.com/yytgravity/Daily-learning-record/tree/master/第1～2周/小测验)
+
+### Question 5 ：学习一下师傅们的漏洞思路：
+
+传送门: [学习一下](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/%E5%80%9F%E9%89%B4.md)
+
+</details>
 
 ### STL
 
