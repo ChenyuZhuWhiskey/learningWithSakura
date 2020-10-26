@@ -7,9 +7,11 @@
 ## 目前进度
 
 <details>
-<summary>Week1-4:学习C++并编写简单的STL</summary>
+<summary>Week1-5:学习C++并编写简单的STL</summary>
+
 ### 主项目
 传送门：[My-Tiny-STL](https://github.com/ChenyuZhuWhiskey/MyTinySTL)
+
 ### 总结
 - 主要配合侯捷视频以及SGI STL编写。STL分为6个组件：allocator，iterator，container，functor，adaptor，algorithm
 - allocator(simple)：内存分配
@@ -21,7 +23,7 @@
 - adaptor：简单容器改造一下得到的其他容器
 - container：容器是STL提供的标准数据结构，我在myTinySTL中实现了几个比较重要的数据结构：
 	- vector：三根指向连续内存，空间不够时申请一块2*size的新内存然后用`initialized_copy()`拷贝赋值
-![stl_vector](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/stl_mem_diagram/stl_vector.png)	
+		![stl_vector](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/stl_mem_diagram/stl_vector.png)	
 	- list：双向链表，首尾相连（环状）
 ![stl_list](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/stl_mem_diagram/stl_list.png)
 	- tree:红黑树。
@@ -100,64 +102,189 @@ size_type hash_func(Obj& __obj, Bucket& __bucket){
 判断链表是否过长时使用一种经验方法：当插入数大于bucket的size时，就认为链表过长，此时重新申请更大空间，并按照hash函数重新分配各个obj。
 ![HT_size](https://chenyu-learning-with-sakura-img-1302348848.cos.ap-nanjing.myqcloud.com/20200608/hashTable_size.png)
 stl的size就是这么取的，第一个是53，接下来不断加倍，取最近的素数作为新的size。
-	- map/set：adaptor，底层数据结构就是一个红黑树
-	- hashmap/hashset：adaptor，底层数据结构就是一个hashtable.
+ - map/set：adaptor，底层数据结构就是一个红黑树
+ - hashmap/hashset：adaptor，底层数据结构就是一个hashtable.
+
+### 思考题：
+
+1.一些STL会误用的场景：
+
+- 假如容器中的对象中包含指针类型，使用默认拷贝构造函数(浅拷贝)，析构时会触发UAF。一个自定义拷贝构造函数往往就对应一个析构函数，算是常识。
+- vector的`erase()`不检查边界，误用会访问未初始化的内存：
+
+```c++
+#include <vector>
+int main() {
+    std::vector<int> test = std::vector<int>();
+    test.push_back(1);
+    auto iter = test.begin();
+    test.erase(iter + 2);
+    return 0;
+}
+```
+
+- 使用`insett()`,`erase()`等会改变vector内部三根指针指向位置的method时，如果预先cache了`begin()`,`end()`,`size()`等，再使用这些method后cache的值就不等于真正的值了，可能就会导致访问未初始化的内存
+
+2. STL中为什么要定义`uninitialized_copy/fill`和`initialized_copy/fill`两组函数？
+
+   uninitialized_xxx是拷贝构造，会向操作系统申请容器空间。initialized_xxx是拷贝赋值，向已经申请过的内存写入。
+
+3. 容器内存模型
+
+   上面的图有了
+
 </details>
 
 <details>
-<summary>Week1～2: 学习编写简单的sgi stl</summary>
+<summary>Week6-9:CS143 Compiler</summary>
 
-### 主项目：
+### 主项目
 
-传送门: [GraVity0-stl](https://github.com/yytgravity/Daily-learning-record/tree/master/第1～2周/GraVity0_stl)
+传送门：[CS143_Compiler](https://github.com/ChenyuZhuWhiskey/CS143_Compiler)
 
-### Question 1 ： vector编写过程中的安全问题思考：
+### 总结
 
-传送门: [vector编写过程中的安全问题思考](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/vector%E7%BC%96%E5%86%99%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%E6%80%9D%E8%80%83.md)
+#### Program Assignment：
 
-### Question 2 ：为什么实现了uninitialized_xxx和copy/fill这样两组不同的函数：
+- PA2：![PA2](https://weekly-assignment-1302348848.cos.ap-shanghai.myqcloud.com/week5/PA2.png)
 
-传送门: [为什么实现了uninitialized_xxx和copy/fill这样两组不同的函数](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%9E%E7%8E%B0%E4%BA%86uninitialized_xxx%E5%92%8Ccopy:fill%E8%BF%99%E6%A0%B7%E4%B8%A4%E7%BB%84%E4%B8%8D%E5%90%8C%E7%9A%84%E5%87%BD%E6%95%B0.md)
+  见  https://github.com/ChenyuZhuWhiskey/CS143_Compiler/tree/master/assignments/PA2
 
-### Question 3 ：绘制每个容器在内存里的对象存储图
+- PA3：
 
-传送门: [绘制每个容器在内存里的对象存储图](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/%E7%BB%98%E5%88%B6%E6%AF%8F%E4%B8%AA%E5%AE%B9%E5%99%A8%E5%9C%A8%E5%86%85%E5%AD%98%E9%87%8C%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E5%9B%BE.md)
+![PA3](https://weekly-assignment-1302348848.cos.ap-shanghai.myqcloud.com/week5/PA3.png)
 
-### Question 4 ：测试题目
+​	见 https://github.com/ChenyuZhuWhiskey/CS143_Compiler/blob/master/assignments/PA3
 
-传送门: [小测试](https://github.com/yytgravity/Daily-learning-record/tree/master/第1～2周/小测验)
+- PA4：
 
-### Question 5 ：学习一下师傅们的漏洞思路：
+![PA4](https://weekly-assignment-1302348848.cos.ap-shanghai.myqcloud.com/week5/PA4.png)
 
-传送门: [学习一下](https://github.com/yytgravity/Daily-learning-record/blob/master/%E7%AC%AC1%EF%BD%9E2%E5%91%A8/%E6%80%9D%E8%80%83%E9%A2%98/%E5%80%9F%E9%89%B4.md)
+​	见 https://github.com/ChenyuZhuWhiskey/CS143_Compiler/tree/master/assignments/PA4 
+
+##### 小插曲：
+
+在写AST语法树的时候，因为观察到了标准答案一些语法检查是通过多态实现，所以想尝试一下使用模板偏特化实现，结果模板会把一个指向子类对象的父类指针推到为父类，然后就炸了
+
+#### 思考题
+
+1. 浮点数和无符号整数的文法
+
+   浮点数：
+
+   ```
+   S -> optionalSign Int optionalDecimal optionalExp
+   optionalSign -> +|-|epsilon
+   Int digit | Intpart
+   optionalDecimal -> .Int | epsilon
+   optionalExp -> e optionalSign Int | epsilon
+   digit -> 0|1|2|3|4|5|6|7|8|9|
+   ```
+
+   无符号整数：
+
+   ```
+   S -> positive A | A
+   A -> A digit | digit
+   digit -> 0 | positive
+   positive -> 0|1|2|3|4|5|6|7|8|9|
+   ```
+
+2. 描述每种文法（LL(1),SLR, LR(1), LALR等...)的使用条件，和它是为了解决什么问题？
+
+   LL1是为了解决自顶向下推导算法的左递归无限循环，以及backtracking导致的效率低下问题，通过每条文法的SELECT集进行预测分析，因此LL1的使用条件是每条正则文法的SELECT集不冲突，不产生歧义。
+
+   SLR是通过每个项目的FOLLOW集来判断遇到移入-规约冲突时进行移入操作还是规约操作，主要解决LR(0)遇到的移入-规约冲突。使用前提就是他们的FOLLOW集两两不相交
+
+   LR(1)时为了解决SLT仅仅通过FLOOW集解决移入-规约冲突的不足。有项目：
+
+   $A \rightarrow \alpha \cdot a \beta$
+
+   $B \rightarrow \gamma\cdot$
+
+   若a是B的FOLLOW集，则用产生式B规约是必要条件二非充分条件。LR (1)通过向前看一个展望符构造项目集闭包的自动机来解决移入-规约冲突。LR(1)的使用条件是要求文法是LR(1)的，几乎所有context-free grammar都是LR1的。
+
+   LALR文法主要是为了解决LR(1)劈裂LR(0)产生的状态数过于庞大的问题，主要通过合并LR(1)的同心集实现，使用前提是合并后不产生归约-归约冲突。
+
+3. 阅读用flex和bison生成出来的cool代码lexer和parser，理清代码骨架。
+
+   flex见博客：[https://chenyuzhuwhiskey.github.io/2020/06/21/flex-lexer%E5%88%86%E6%9E%90/](https://chenyuzhuwhiskey.github.io/2020/06/21/flex-lexer分析/) 
+
+   bison见博客：[https://chenyuzhuwhiskey.github.io/2020/06/27/bison-parser%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/](https://chenyuzhuwhiskey.github.io/2020/06/27/bison-parser深入分析/)
 
 </details>
 
-### STL
+<details>
+<summary>Week10-13:CSAPP Lab</summary>
 
-- allocator
-- iterator
-- container
-  - vector
-  - list 
-  - tree
-  - hashtable
-  - set/map
-  - hashset/hashmap
-- functor
-- adaptor
-- unintitialized_xxx/copy fill
+### 主项目
 
-Compiler：
+传送门：[Csapp-Lab](https://github.com/ChenyuZhuWhiskey/Csapp-Lab)
 
-- PA2
-- PA3
-- PA4
+### 总结
 
-### 计算机系统基础（一）
+- datalab：整数和浮点数二进制的操作，熟悉它们的编码规则就不难：https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/DATALAB_README.md
 
-- 完成
+- bomb和attack,buffer都是实施缓冲区溢出攻击，主要是学一学gdb，pwndbg，ROPgagdget这些常见工具。当ASLR开启时，栈的地址就被随机化了，然后就需要使用gagdget。
 
-### CSAPP Lab
+  - bomb:  https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/BOMB_README.md 
+  - attack ： https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/ATTACKLAB_README.md 
+  - buffer: https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/BUFFER_README.md 
 
-data，bomb，attack，buffer，arch，cache，perform，shell，还差malloc，proxy
+- arch lab：PartA是根据对应的c代码写它的汇编版本，挺简单的。B就是在架构中添加iaddq，也不是很难，PartC难炸了，做不来。https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/ARCHLAB_README.md 
+
+- cache lab：
+
+  - PartA模拟缓存的工作。首先要知道缓存的算法流程：
+
+  ![cache](https://chenyu-blog-img-1302348848.cos.ap-shanghai.myqcloud.com/kernel-note/00-Write-back_with_write-allocation.png)
+
+  接下来照着写就行。
+
+  - PartB是优化矩阵转置的算法，思路就是去提高代码的时间空间局部性
+  - 见：https://github.com/ChenyuZhuWhiskey/Csapp-Lab/blob/master/CACHELAB_README.md
+
+- shell lab：写一个linux shell。照着CSAPP文中给的代码框架来就可以了。有个坑就是用bash去运行shell时，默认情况下，shell也会是bash的子进程，那么我们用ctrl+c是，实际上bash会向shell和每个子进程都发送`SIGINT`信号，这是部队的，因此在fork后execve前重写shell子进程的pid保证bash有且只有shell一个子进程
+
+- malloc lab：花时间最多的lab，因为翻译the art of software security assessment的内存损坏漏洞时提到heap overflow的基础是对free时的frelist链表写入操作进行利用，但这里并没有写的很详细，所以除了花时间看CSAPP第九章虚拟内存以外（感觉把物理存储当作内存的cache，以及详细的页表操作对malloc lab好像帮助不大，不过对虚拟地址空间有了深入了解），还花了时间去读glibc malloc的源码，参考了CTF wiki和ptmalloc源码分析这两个资料，写了篇博客： [https://chenyuzhuwhiskey.github.io/2020/08/14/glibc-malloc-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/](https://chenyuzhuwhiskey.github.io/2020/08/14/glibc-malloc-源码分析/) 。不过由于时间太赶，只读了核心的数据结构部分，实际上就是内存池（链表数组）+内存池的cache（fast bin），相应size的free chunk会在对应的index中被链在链表里，并且物理相邻的free chunk会被合并，所以确实把C++的allocator交给malloc就足够了，再单独写一个内存池说不定性能还没glibc的malloc优秀。malloc lab需要实现的malloc没有那么复杂，就是内存池（小块）+平衡二叉树（大块），不过没拿到满分，可能是没有写fast bin当作内存池的cache来加快有时间空间局部性内存申请的速度
+
+  评分：
+
+  ```
+  Team Name:evangelion
+  Member 1 :Chenyu ZHU:id1
+  Measuring performance with gettimeofday().
+  
+  Testing mm malloc
+  Reading tracefile: short1-bal.rep
+  Checking mm_malloc for correctness, efficiency, and performance.
+  
+  Results for mm malloc:
+  trace  valid  util     ops      secs  Kops
+   0       yes   66%      12  0.000000 24000
+  Total          66%      12  0.000000 24000
+  
+  Perf index = 40 (util) + 40 (thru) = 80/100
+  ```
+
+</details>
+
+<details>
+<summary>Week14-20:Linux Kernel</summary>
+
+### 主项目
+
+还没搞完，传送门：[ucore](https://github.com/ChenyuZhuWhiskey/simple_kernel)
+
+内核分析的博客更新中：https://chenyuzhuwhiskey.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/
+
+</details>
+
+<details>
+<summary>支线任务：翻译the art of software security assessment</summary>
+
+目前已翻译:chap1,2,5,6
+
+博客传送门：https://chenyuzhuwhiskey.github.io/categories/translate/
+
+</details>
