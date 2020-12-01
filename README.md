@@ -290,3 +290,151 @@ int main() {
 博客传送门：https://chenyuzhuwhiskey.github.io/categories/translate/
 
 </details>
+
+
+
+<details>
+<summary>支线任务：leetcode</summary>
+
+### 2020 November Leetcoding Challenge
+
+#### Day 29: Jump Game III
+
+Given an array of non-negative integers `arr`, you are initially positioned at `start` index of the array. When you are at index `i`, you can jump to `i + arr[i]` or `i - arr[i]`, check if you can reach to **any** index with value 0.
+
+Notice that you can not jump outside of the array at any time.
+
+##### Solution: BFS || DFS
+
+这个题实际上就是用题目所给的方式遍历index，然后找到能否遍历到对应value为0
+
+的index。使用BFS或者DFS遍历，然后用一个set记下遍历过的index就可以了。
+
+```c++
+class Solution {
+public:
+    bool canReach(vector<int>& arr, int start) {
+        set<int> indexes; //用于储存遍历过的index
+        indexes.insert(start);
+        queue<int> index_que;
+        index_que.push(start);
+        while(!index_que.empty()){//如果queue清空，则全部index遍历完成，或者能够遍历到的index遍历完成（部分index形成了闭环）
+            if(arr.at(index_que.front()) == 0){
+                return true;
+            }
+            int tmp1 = index_que.front() + arr.at(index_que.front());
+            int tmp2 = index_que.front() - arr.at(index_que.front());
+            if(tmp1 < arr.size() && indexes.insert(tmp1).second) index_que.push(tmp1);
+            if(tmp2 >= 0 && indexes.insert(tmp2).second) index_que.push(tmp2);
+            index_que.pop();
+        }
+        return false;
+        
+    }
+};
+```
+
+#### Day 30: The Skyline Problem
+
+ A city's skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance. Now suppose you are **given the locations and height of all the buildings** as shown on a cityscape photo (Figure A), write a program to **output the skyline** formed by these buildings collectively (Figure B). 
+
+![buildings](./img/leetcode/skyline1.png)
+
+![skyline contour](./img/leetcode/skyline2.png)
+
+The geometric information of each building is represented by a triplet of integers `[Li, Ri, Hi]`, where `Li` and `Ri` are the x coordinates of the left and right edge of the ith building, respectively, and `Hi` is its height. It is guaranteed that `0 ≤ Li, Ri ≤ INT_MAX`, `0 < Hi ≤ INT_MAX`, and `Ri - Li > 0`. You may assume all buildings are perfect rectangles grounded on an absolutely flat surface at height 0.
+
+For instance, the dimensions of all buildings in Figure A are recorded as: `[ [2 9 10], [3 7 15], [5 12 12], [15 20 10], [19 24 8] ] `.
+
+The output is a list of "**key points**" (red dots in Figure B) in the format of `[ [x1,y1], [x2, y2], [x3, y3], ... ]` that uniquely defines a skyline. **A key point is the left endpoint of a horizontal line segment**. Note that the last key point, where the rightmost building ends, is merely used to mark the termination of the skyline, and always has zero height. Also, the ground in between any two adjacent buildings should be considered part of the skyline contour.
+
+For instance, the skyline in Figure B should be represented as:`[ [2 10], [3 15], [7 12], [12 0], [15 10], [20 8], [24, 0] ]`.
+
+**Notes:**
+
+- The number of buildings in any input list is guaranteed to be in the range `[0, 10000]`.
+- The input list is already sorted in ascending order by the left x position `Li`.
+- The output list must be sorted by the x position.
+- There must be no consecutive horizontal lines of equal height in the output skyline. For instance, `[...[2 3], [4 5], [7 5], [11 5], [12 7]...]` is not acceptable; the three lines of height 5 should be merged into one in the final output as such: `[...[2 3], [4 5], [12 7], ...]`
+
+
+
+##### Solution
+
+扫描线法：从左到右扫过，遇到左边，将高度存入set，遇到右边，将对应高度从set中删掉。用一个变量记录上一个转折点。如果上一个转折点的高度和set中最高高度不一致，则说明当前边上有一个转折点。
+
+![skyline solution](./img/leetcode/skyline.gif)
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+        multiset<pair<int,int>> all;
+        for(auto& e : buildings){
+            all.insert(make_pair(e[0],-e[2]));
+            all.insert(make_pair(e[1],e[2]));
+        }
+        
+        multiset<int> heights({0});
+        vector<int> last{0,0};
+        vector<vector<int>> ret;
+        for(auto& p : all){
+            if(p.second < 0) heights.insert(-p.second);
+            else heights.erase(heights.find(p.second));
+            
+            int max_height = *heights.rbegin();
+            if(last[1] != max_height){
+                last[0] = p.first;
+                last[1] = max_height;
+                ret.push_back(last);
+            }
+        }
+        return ret;
+    }
+};
+```
+
+### 2020 December Leetcoding Challenge
+
+#### Day1:  Maximum Depth of Binary Tree
+
+Given the `root` of a binary tree, return *its maximum depth*.
+
+A binary tree's **maximum depth** is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+##### Solution
+
+二叉树深度，用递归或者动态规划理解都可以，迭代公式：
+
+`Depth(node) = 1 + max{node->left,node->right}`
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if(root == nullptr) return 0;
+        if(root->left == nullptr && root->right == nullptr) return 1;
+        return 1 + max(maxDepth(root->left), maxDepth(root->right));
+    }
+    
+    inline int max(int val1, int val2){
+        return val1 > val2 ? val1 : val2;
+    }
+};
+```
+
+可以优化一下，毕竟递归的调用栈会消耗更多的内存。
+
+</details>
+
