@@ -436,5 +436,81 @@ public:
 
 可以优化一下，毕竟递归的调用栈会消耗更多的内存。
 
+#### Day2:   Linked List Random Node 
+
+Given a singly linked list, return a random node's value from the linked list. Each node must have the **same probability** of being chosen.
+
+**Follow up:**
+What if the linked list is extremely large and its length is unknown to you? Could you solve this efficiently without using extra space?
+
+##### Solution
+
+可以考虑一下简单的随机数生成算法XorShift生成一个32位的随机数，然后将生成数作为新的seed，这样就保证下一个生成数也是随机的，然后先在`Solution`的构造函数中得到`ListNode`的`size`，用这个随机数取余就可以了。
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+struct xorshift32_state {
+  unsigned a;
+    xorshift32_state(unsigned num):a(num){}
+};
+
+/* The state word must be initialized to non-zero */
+unsigned xorshift32(xorshift32_state *state)
+{
+	/* Algorithm "xor" from p. 4 of Marsaglia, "Xorshift RNGs" */
+	unsigned x = state->a;
+	x ^= x << 13;
+	x ^= x >> 17;
+	x ^= x << 5;
+	return state->a = x;
+}
+
+
+class Solution {
+public:
+    /** @param head The linked list's head.
+        Note that the head is guaranteed to be not null, so it contains at least one node. */
+    Solution(ListNode* head):size(0),node(head),generator(1) {
+        
+        while(head != nullptr){
+            size++;
+            head = head->next;
+        }
+    }
+    
+    /** Returns a random node's value. */
+    int getRandom() {
+        this->generator = xorshift32(new xorshift32_state(this->generator));
+        unsigned indx = generator  % this->size;
+        ListNode* head = this->node;
+        for(unsigned i = 1; i <= indx; ++i)
+            head = head -> next;
+        
+        return head -> val;
+    }
+private:
+    unsigned size;
+    ListNode* node;
+    unsigned generator;
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(head);
+ * int param_1 = obj->getRandom();
+ */
+```
+
+不过这样的解法消耗的RAM好像有点点多。
+
 </details>
 
