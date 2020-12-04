@@ -512,5 +512,101 @@ private:
 
 不过这样的解法消耗的RAM好像有点点多。
 
+#### Day3: Increasing Order Search Tree
+
+Given the `root` of a binary search tree, rearrange the tree in **in-order** so that the leftmost node in the tree is now the root of the tree, and every node has no left child and only one right child.
+
+##### Solution:
+
+两种方法：第一种是DFS：
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* increasingBST(TreeNode* root) {
+        if(root == nullptr) return nullptr;
+        if(root->left == nullptr || root->right == nullptr) return root;
+        TreeNode* rethead;
+        TreeNode* node = root;
+
+        rethead =  new TreeNode();
+        TreeNode* rightptr = rethead;
+        
+        stack<TreeNode*> tree_stck;
+        tree_stck.push(node);
+        while(!tree_stck.empty()){
+            if(node->left != nullptr){
+                node = node->left;
+                tree_stck.push(node);
+            }
+            else{
+                while(!tree_stck.empty()){
+                    node = tree_stck.top();
+                    rightptr->right = new TreeNode(node->val);
+                    rightptr = rightptr->right;
+                    tree_stck.pop();
+                    
+                    if(node->right != nullptr){
+                        node = node->right;
+                        tree_stck.push(node);
+                        break;
+                    }
+                    
+                    
+                }
+            }
+        }
+        return rethead->right;
+        
+        
+    }
+};
+```
+
+第二种是中序遍历，代码量和复杂度都更加简洁：
+
+```c++
+class Solution {
+public:
+    TreeNode* increasingBST(TreeNode* root) {
+        if(root == nullptr) return nullptr;
+        TreeNode* ret = new TreeNode();
+        ptr = ret;
+        middle(root);
+        return ret->right;
+        
+        
+        
+    }
+    
+    void middle(TreeNode* node){
+        if(node == nullptr) return;
+        middle(node->left);
+        ptr -> right = new TreeNode(node->val);
+        ptr = ptr->right;
+        middle(node->right);
+        
+        
+    }
+    
+private:
+    TreeNode* ptr;
+    
+};
+```
+
+
+
 </details>
 
