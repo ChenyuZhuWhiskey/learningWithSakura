@@ -633,7 +633,65 @@ public:
 };
 ```
 
+#### Day5: Can Place Flowers
 
+You have a long flowerbed in which some of the plots are planted, and some are not. However, flowers cannot be planted in **adjacent** plots.
+
+Given an integer array `flowerbed` containing `0`'s and `1`'s, where `0` means empty and `1` means not empty, and an integer `n`, return `true` *if* `n` new flowers can be planted in the `flowerbed` without violating the no-adjacent-flowers rule.
+
+##### Solution:
+
+方法1: 直接尝试往序列里插n朵花，这里边界条件要注意写好。
+
+```C++
+class Solution {
+public:
+    bool canPlaceFlowers(vector<int>& flowerbed, int n) {
+        if(n==0) return true;
+        if(flowerbed.size()==1){
+            return !(bool)flowerbed[0];
+        }
+        auto iter = flowerbed.begin();
+        if(*iter == 0 && *(iter+1) == 0){
+            if(--n == 0) return true;
+            *iter=1;
+        }
+        auto riter = flowerbed.rbegin();
+        if(*riter == 0 && *(riter+1)==0){
+            if(--n == 0) return true;
+            *riter=1;
+        }
+        iter++;
+        while(iter!=flowerbed.end()-1){
+            if(*iter == 0 && *(iter-1)==0 && *(iter+1)==0){
+                *iter = 1; n--;
+            }
+            iter++;
+            if(n == 0){
+                return true;
+            }
+            
+        }
+        return false;
+    }
+};
+```
+
+第二种方法使用动态规划，假设k个`flowerbed`能插入的花数量`p[k]`已知，那么它和`p[k+1]`之间的关系为：
+
+```
+					p[k]+1  if flowerbed[k] == 0 && flowerbed[k+1] == 0 && (flowerbed[k+2] == 0 || k+1 == flowerbed.length) 
+p[k+1] =	0				others
+```
+
+边界条件：
+
+```
+				1 if flowerbed.length = 1 && flowerbed[0] == 0
+p[0] =  0 others
+```
+
+不过写下来也差不多（指边界条件）。
 
 </details>
 
