@@ -695,3 +695,96 @@ p[0] =  0 others
 
 </details>
 
+#### Day 6: Populating Next Right Pointers in Each Node II 
+
+Given a binary tree
+
+```
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+```
+
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to `NULL`.
+
+Initially, all next pointers are set to `NULL`.
+
+ 
+
+**Follow up:**
+
+- You may only use constant extra space.
+- Recursive approach is fine, you may assume implicit stack space does not count as extra space for this problem.
+
+##### Solution:
+
+迭代就好了，迭代公式就是：
+
+对于该节点的`left`,其`next`指向`right`（如果`right != nullptr`）,否则指向该节点`next`中第一个有子节点的`left`，若`left`不存在则`right`。
+
+对于该节点的`right`，其`next`指向该节点`next`中第一个有子节点的`left`，若`left`不存在则`right`。
+
+注意遍历顺序为中->右->左。
+
+```C++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+*/
+
+class Solution {
+public:
+    Node* connect(Node* root) {
+        connect_aux(root);
+        return root;
+    }
+    
+    void connect_aux(Node* root){
+        if(root == nullptr) return;
+        
+
+        Node* next;
+        if(root -> left != nullptr) {
+            if(root->right != nullptr) root->left->next = root->right;
+            else if(root -> next != nullptr){
+                next = root->next;
+                while(next->next != nullptr && next->left == nullptr && next->right == nullptr) 
+                    next = next->next;
+                next = next->left != nullptr ? next->left : next->right;
+                root->left->next = next;
+            }
+        }
+        if(root->right != nullptr){
+            if(root -> next != nullptr){
+                next = root->next;
+                while(next->next != nullptr && next->left == nullptr && next->right == nullptr) 
+                    next = next->next;
+                next = next->left != nullptr ? next->left : next->right;
+                root->right->next = next;
+            }
+        }
+        
+
+        connect_aux(root->right);
+        connect_aux(root->left);
+        
+    }
+};
+```
+
