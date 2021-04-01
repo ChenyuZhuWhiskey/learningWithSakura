@@ -693,7 +693,9 @@ p[0] =  0 others
 
 不过写下来也差不多（指边界条件）。
 
-</details>
+
+
+
 
 #### Day 6: Populating Next Right Pointers in Each Node II 
 
@@ -788,3 +790,260 @@ public:
 };
 ```
 
+#### 
+
+
+
+### 2021 April Leetcoding Challenge
+
+#### Day1: Palindrome Linked List
+
+Given the `head` of a singly linked list, return `true` if it is a palindrome.
+
+ 
+
+**Example 1:**
+
+![img](https://assets.leetcode.com/uploads/2021/03/03/pal1linked-list.jpg)
+
+```
+Input: head = [1,2,2,1]
+Output: true
+```
+
+**Example 2:**
+
+![img](https://assets.leetcode.com/uploads/2021/03/03/pal2linked-list.jpg)
+
+```
+Input: head = [1,2]
+Output: false
+```
+
+ 
+
+**Constraints:**
+
+- The number of nodes in the list is in the range `[1, 105]`.
+- `0 <= Node.val <= 9`
+
+**Follow up:** Could you do it in `O(n)` time and `O(1)` space?
+
+
+
+##### Solution:
+
+如果不考虑Follow Up的`o(1)` space, 那么用一个stack一半push一半pop就行了，考虑 `O(1)`  space，那么就把前一半先反转，然后和后一半逐个比较即可。
+
+```C++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if (head->next == nullptr) return true;
+        int size = 0;
+        ListNode* node;
+        for (node = head; node != nullptr; node = node->next) {
+            size++;
+        }
+        std::pair<ListNode*, ListNode*> pair = cutInMid(head, size);
+        ListNode* node1 = pair.first;
+        ListNode* node2 = pair.second;
+        while (node1 != nullptr && node2 != nullptr) {
+            if (node1->val != node2->val) {
+                return false;
+            }
+            node1 = node1->next;
+            node2 = node2->next;
+        }
+        return true;
+
+
+
+
+    }
+    std::pair<ListNode*, ListNode*> cutInMid(ListNode* head, int size) {
+        ListNode* node1 = head, * node2, * tempnode;
+        head = head->next;
+        node1->next = nullptr;
+        int mid = size / 2, i;
+        for (i = 0; i < mid - 1; ++i) {
+            tempnode = node1;
+            node1 = head;
+            head = head->next;
+            node1->next = tempnode;
+        }
+        if (size % 2 == 1) {
+            node2 = head->next;
+        }
+        else {
+            node2 = head;
+        }
+        return std::make_pair(node1, node2);
+    }
+};
+```
+
+### 题库
+
+#### 1625. Lexicographically Smallest String After Applying Operations
+
+You are given a string `s` of **even length** consisting of digits from `0` to `9`, and two integers `a` and `b`.
+
+You can apply either of the following two operations any number of times and in any order on `s`:
+
+- Add `a` to all odd indices of `s` **(0-indexed)**. Digits post `9` are cycled back to `0`. For example, if `s = "3456"` and `a = 5`, `s` becomes `"3951"`.
+- Rotate `s` to the right by `b` positions. For example, if `s = "3456"` and `b = 1`, `s` becomes `"6345"`.
+
+Return *the **lexicographically smallest** string you can obtain by applying the above operations any number of times on* `s`.
+
+A string `a` is lexicographically smaller than a string `b` (of the same length) if in the first position where `a` and `b` differ, string `a` has a letter that appears earlier in the alphabet than the corresponding letter in `b`. For example, `"0158"` is lexicographically smaller than `"0190"` because the first position they differ is at the third letter, and `'5'` comes before `'9'`.
+
+##### Solution
+
+一开始贪心算法直接炸了，最后注意到搜索结构是二叉树，用广度优先搜索即可。
+
+```C++
+class Solution {
+public:
+    string findLexSmallestString(string s, int a, int b) {
+        if (s.size() == 1) return s;
+        strqueue.push(s);
+        strset.insert(s);
+        string astr, rstr;
+        while (!strqueue.empty()) {
+            s = strqueue.front();
+            astr = add(s, a);
+            rstr = rotate(s, b);
+
+            if (strset.insert(astr).second) {
+                strqueue.push(astr);
+            }
+            if (strset.insert(rstr).second) {
+                strqueue.push(rstr);
+            }
+                
+            strqueue.pop();
+
+
+        }
+        return *strset.begin();
+    }
+private:
+    string add(string s, int a) {
+        char zero = '0';
+        for (auto iter = s.begin(); iter != s.end(); ++iter) {
+            ++iter;
+            int num = *iter + a - zero;
+            if (num > 9) num -= 10;
+            *iter = num + zero;
+        }
+        return s;
+    }
+
+    string rotate(string s, int b) {
+        string first = string(s.begin(), s.begin() + s.size()-b);
+        string last = string(s.begin() + s.size() - b, s.end());
+        return last + first;
+    }
+
+private:
+    queue<string> strqueue;
+    set<string> strset;
+};
+
+```
+
+#### 1035. Uncrossed Lines
+
+We write the integers of `A` and `B` (in the order they are given) on two separate horizontal lines.
+
+Now, we may draw *connecting lines*: a straight line connecting two numbers `A[i]` and `B[j]` such that:
+
+- `A[i] == B[j]`;
+- The line we draw does not intersect any other connecting (non-horizontal) line.
+
+Note that a connecting lines cannot intersect even at the endpoints: each number can only belong to one connecting line.
+
+Return the maximum number of connecting lines we can draw in this way.
+
+ 
+
+**Example 1:**
+
+![img](https://assets.leetcode.com/uploads/2019/04/26/142.png)
+
+```
+Input: A = [1,4,2], B = [1,2,4]
+Output: 2
+Explanation: We can draw 2 uncrossed lines as in the diagram.
+We cannot draw 3 uncrossed lines, because the line from A[1]=4 to B[2]=4 will intersect the line from A[2]=2 to B[1]=2.
+```
+
+**Example 2:**
+
+```
+Input: A = [2,5,1,2,5], B = [10,5,2,1,5,2]
+Output: 3
+```
+
+**Example 3:**
+
+```
+Input: A = [1,3,7,1,7,5], B = [1,9,2,5,1]
+Output: 2
+```
+
+**Note:**
+
+1. `1 <= A.length <= 500`
+2. `1 <= B.length <= 500`
+3. `1 <= A[i], B[i] <= 2000`
+
+##### Solution
+
+Longest Common Subsequence (LCS) Problem，动态规划解决。
+
+```c++
+dp[i][j] = 0 if i or j ==0
+    	 = 1 + dp[i-1][j-1] if A[i]==B[j]
+    	 = max(dp[i-1][j],dpdp[i][j-1])
+```
+
+```C++
+class Solution {
+public:
+    int maxUncrossedLines(vector<int>& A, vector<int>& B) {
+        int m = A.size(), n = B.size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1));
+        for (int i = 0; i <= m; ++i) {
+            for (int j = 0; j <= n; ++j) {
+                if (i==0 || j==0) {
+                    dp[i][j]=0;
+                }
+                else if (A[i-1]==B[j-1]) {
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else {
+                    dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        return dp[m][n];
+
+    }
+};
+```
+
+
+
+</details>
