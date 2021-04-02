@@ -893,6 +893,74 @@ public:
 };
 ```
 
+#### Day2: Ones and Zeroes
+
+You are given an array of binary strings `strs` and two integers `m` and `n`.
+
+Return *the size of the largest subset of `strs` such that there are **at most*** `m` `0`*'s and* `n` `1`*'s in the subset*.
+
+A set `x` is a **subset** of a set `y` if all elements of `x` are also elements of `y`.
+
+ 
+
+**Example 1:**
+
+```
+Input: strs = ["10","0001","111001","1","0"], m = 5, n = 3
+Output: 4
+Explanation: The largest subset with at most 5 0's and 3 1's is {"10", "0001", "1", "0"}, so the answer is 4.
+Other valid but smaller subsets include {"0001", "1"} and {"10", "1", "0"}.
+{"111001"} is an invalid subset because it contains 4 1's, greater than the maximum of 3.
+```
+
+**Example 2:**
+
+```
+Input: strs = ["10","0","1"], m = 1, n = 1
+Output: 2
+Explanation: The largest subset is {"0", "1"}, so the answer is 2.
+```
+
+**Constraints:**
+
+- `1 <= strs.length <= 600`
+- `1 <= strs[i].length <= 100`
+- `strs[i]` consists only of digits `'0'` and `'1'`.
+- `1 <= m, n <= 100`
+
+##### Solution
+
+动态规划. 设`dp[i][j]`为`m==i`和`n==j`的maxform，那么有：
+
+```C++
+dp[i][j] = dp[i][j] 如果str的zeros大于i或者str的ones大于j
+         = dp[i-zeros][j-ones]+1 被安排进set中成为一员
+```
+
+```C++
+class Solution {
+public:
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<vector<int>> dp(m+1,vector<int>(n+1));
+         for(auto& str: strs){
+             int zeros = count(str.begin(), str.end(),'0'), ones = str.size()-zeros;
+             for(int i = m; i >= zeros; --i){
+                 for(int j = n; j >= ones; --j){
+                     dp[i][j] = max(dp[i][j],dp[i-zeros][j-ones]+1);
+                 }
+             }
+         }
+        return dp[m][n];
+    }
+
+
+
+
+};
+```
+
+
+
 ### 题库
 
 #### 1625. Lexicographically Smallest String After Applying Operations
@@ -1041,6 +1109,148 @@ public:
         return dp[m][n];
 
     }
+};
+```
+
+#### 494. Target Sum
+
+You are given a list of non-negative integers, a1, a2, ..., an, and a target, S. Now you have 2 symbols `+` and `-`. For each integer, you should choose one from `+` and `-` as its new symbol.
+
+Find out how many ways to assign symbols to make sum of integers equal to target S.
+
+**Example 1:**
+
+```
+Input: nums is [1, 1, 1, 1, 1], S is 3. 
+Output: 5
+Explanation: 
+
+-1+1+1+1+1 = 3
++1-1+1+1+1 = 3
++1+1-1+1+1 = 3
++1+1+1-1+1 = 3
++1+1+1+1-1 = 3
+
+There are 5 ways to assign symbols to make the sum of nums be target 3.
+```
+
+ 
+
+**Constraints:**
+
+- The length of the given array is positive and will not exceed 20.
+- The sum of elements in the given array will not exceed 1000.
+- Your output answer is guaranteed to be fitted in a 32-bit integer.
+
+##### Solution
+
+递归+DFS。
+
+```C++
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+
+        findWays(nums, S, 0, nums[0]);
+        findWays(nums, S, 0, -nums[0]);
+        return ways;
+        
+    }
+private:
+    
+    int ways=0;
+    void findWays(vector<int>& nums, int S, int index, int sum){
+
+        if(sum == S && index == nums.size()-1){
+            ++ways;
+        }
+        if (index+1 < nums.size()){
+            findWays(nums,S,index+1,sum+nums[index+1]);
+            findWays(nums,S,index+1,sum-nums[index+1]);
+        }
+    }
+};
+```
+
+#### 5. Longest Palindromic Substring
+
+Given a string `s`, return *the longest palindromic substring* in `s`.
+
+ 
+
+**Example 1:**
+
+```
+Input: s = "babad"
+Output: "bab"
+Note: "aba" is also a valid answer.
+```
+
+**Example 2:**
+
+```
+Input: s = "cbbd"
+Output: "bb"
+```
+
+**Example 3:**
+
+```
+Input: s = "a"
+Output: "a"
+```
+
+**Example 4:**
+
+```
+Input: s = "ac"
+Output: "a"
+```
+
+**Constraints:**
+
+- `1 <= s.length <= 1000`
+- `s` consist of only digits and English letters (lower-case and/or upper-case),
+
+##### Solution
+
+用不用动态规划都差不多，核心思路就是最新的最长字串一定是从尾部出来的。
+
+```C++
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        auto begin = s.begin(), end = ++s.begin();
+        int palindromeendsize = 1;
+        for (int i = 1; i < dp.size(); ++i) {
+            for (int j = 0; j <= i - palindromeendsize; ++j) {
+                if (isPalindrome(s, j, i)) {
+                    begin = s.begin() + j;
+                    end = s.begin() + i+1;
+                    palindromeendsize = end - begin;
+                }
+            }
+
+
+        }
+        return string(begin, end);
+    }
+
+    inline bool isPalindrome(string& s, int begin, int end) {
+        if (end - begin == 1 || end-begin == 2) {
+            return s[end] == s[begin];
+        }
+        else {
+            int mid = (end - begin) / 2;
+            for (int i = 0; i <= mid; ++i) {
+                if (s[begin + i] != s[end - i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
 };
 ```
 
