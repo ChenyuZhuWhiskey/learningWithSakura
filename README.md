@@ -790,10 +790,6 @@ public:
 };
 ```
 
-#### 
-
-
-
 ### 2021 April Leetcoding Challenge
 
 #### Day1: Palindrome Linked List
@@ -956,6 +952,62 @@ public:
 
 
 
+};
+```
+
+#### Day3:  Longest Valid Parentheses 
+
+Given a string containing just the characters `'('` and `')'`, find the length of the longest valid (well-formed) parentheses substring.
+
+ 
+
+**Example 1:**
+
+```
+Input: s = "(()"
+Output: 2
+Explanation: The longest valid parentheses substring is "()".
+```
+
+**Example 2:**
+
+```
+Input: s = ")()())"
+Output: 4
+Explanation: The longest valid parentheses substring is "()()".
+```
+
+**Example 3:**
+
+```
+Input: s = ""
+Output: 0
+```
+
+**Constraints:**
+
+- `0 <= s.length <= 3 * 104`
+- `s[i]` is `'('`, or `')'`.
+
+##### Solution
+
+这个题目的关键在于valid parentheses substring有这样一个性质：它要么是另一个更大的valid parentheses substring的子集，要么就和其他valid parentheses substring没有交集。因此使用stack的方法稍微改进就可以了。
+
+```C++
+class Solution {
+public:
+    int longestValidParentheses(string S) {
+        vector<int> stack = {-1};
+        int ans = 0, size = S.size();
+        for (int i = 0; i < size; i++)
+            if (S[i] == '(') stack.push_back(i);
+            else if (stack.size() == 1) stack[0] = i;
+            else {
+                stack.pop_back();
+                ans = max(ans, i - stack.back());
+            }
+        return ans;
+    }
 };
 ```
 
@@ -1368,6 +1420,57 @@ public:
             }
         }
         return dp[m-1][n-1];
+    }
+};
+```
+
+#### 96. Unique Binary Search Trees 
+
+Given an integer `n`, return *the number of structurally unique **BST'**s (binary search trees) which has exactly* `n` *nodes of unique values from* `1` *to* `n`.
+
+ 
+
+**Example 1:**
+
+![img](https://assets.leetcode.com/uploads/2021/01/18/uniquebstn3.jpg)
+
+**Example 2:**
+
+```
+Input: n = 1
+Output: 1
+```
+
+**Constraints:**
+
+- `1 <= n <= 19`
+
+##### Solution
+
+动态规划，注意到一个二叉搜索树的子树也是二叉搜索树，因此以`i`为head的树，其可能的二叉树结构数为：
+$$
+numUniqueBST_{head}(i) = numUniqueBST(i.left)*numUniqueBST(i.right)
+$$
+而对于数字n，总的二叉树结构为：
+$$
+numUniqueBST(n) = \sum_i numUniqueBST_{head}(i)
+$$
+
+```C++
+class Solution {
+public:
+    int numTrees(int n) {
+        vector<int> p(n + 1);
+        p[0] = 1;
+        p[1] = 1;
+        for (int i = 2; i <= n; ++i) {
+            for (int j = 1; j <= i; ++j) {
+                int num_lager = i - j;
+                int num_smaller = j - 1;
+                p[i] += p[num_lager] * p[num_smaller];
+            }
+        }
+        return p[n];
     }
 };
 ```
